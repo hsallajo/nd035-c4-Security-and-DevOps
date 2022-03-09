@@ -5,7 +5,7 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh '''
-                    echo "Multiline shell steps works too"
+                    echo "Multiline sshell steps works too"
                     ls -lah
                 '''
             }
