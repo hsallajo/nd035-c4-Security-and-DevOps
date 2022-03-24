@@ -1,7 +1,6 @@
 package com.example.demo.controllers;
 
-import java.util.Optional;
-
+import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,13 +54,17 @@ public class UserController {
 
 		if (createUserRequest.getPassword() == null ||
 				createUserRequest.getConfirmPassword() == null ||
-				createUserRequest.getPassword().length() < 8 ||
 				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
 			log.info("Invalid username or password.");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 
-		// add some validation
+		if (createUserRequest.getPassword().length() < 8
+				|| StringUtils.isAlpha(createUserRequest.getPassword())
+				|| StringUtils.isNumeric(createUserRequest.getPassword())){
+			log.info("Password length must be at least 8 characters, and it needs to contain both letters and numbers.");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
 
 		user.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
 
