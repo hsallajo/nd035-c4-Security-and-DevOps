@@ -2,7 +2,6 @@ package com.example.demo;
 
 import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.UserRepository;
-import com.example.demo.security.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,8 +38,6 @@ public class UserControllerTest {
     @MockBean
     UserRepository userRepository;
 
-    @MockBean
-    UserDetailsServiceImpl userDetailsService;
 
     @Test
     public void create_new_user_with_valid_credentials() throws Exception{
