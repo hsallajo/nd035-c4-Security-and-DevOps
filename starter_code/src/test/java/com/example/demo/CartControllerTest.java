@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.controllers.CartController;
 import com.example.demo.model.persistence.Cart;
 import com.example.demo.model.persistence.Item;
 import com.example.demo.model.persistence.User;
@@ -7,7 +8,7 @@ import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.ItemRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.ModifyCartRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.demo.security.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,18 +17,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -36,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@WebMvcTest(CartController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class CartControllerTest {
 
@@ -65,8 +64,12 @@ public class CartControllerTest {
     ItemRepository itemRepository;
 
     @MockBean
+    UserDetailsServiceImpl userDetailsService;
+
+    @MockBean
     Cart cart;
 
+    @WithMockUser
     @Test
     public void add_item_to_cart() throws Exception{
 
@@ -103,6 +106,7 @@ public class CartControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     public void add_item_to_cart_with_invalid_user_throws_exception() throws Exception {
 
@@ -119,6 +123,7 @@ public class CartControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @WithMockUser
     @Test
     public void remove_item_from_cart() throws Exception {
 
@@ -156,6 +161,7 @@ public class CartControllerTest {
 
     }
 
+    @WithMockUser
     @Test
     public void remove_item_from_cart_with_invalid_item_throws_exception() throws Exception {
 

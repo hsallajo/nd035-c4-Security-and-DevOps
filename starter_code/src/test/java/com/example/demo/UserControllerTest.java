@@ -1,17 +1,21 @@
 package com.example.demo;
 
+import com.example.demo.controllers.UserController;
 import com.example.demo.model.persistence.User;
+import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
+import com.example.demo.security.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -27,8 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(UserController.class)
 public class UserControllerTest {
     private static final Logger log = LoggerFactory.getLogger(UserControllerTest.class);
 
@@ -38,9 +41,19 @@ public class UserControllerTest {
     @MockBean
     UserRepository userRepository;
 
+    @MockBean
+    CartRepository cartRepository;
 
+    @MockBean
+    BCryptPasswordEncoder passwordEncoder;
+
+    @MockBean
+    UserDetailsServiceImpl userDetailsService;
+
+
+    @WithMockUser
     @Test
-    public void create_new_user_with_valid_credentials() throws Exception{
+    public void creates_new_user_with_valid_credentials() throws Exception{
 
         Object o = new Object(){
             public String username = "jane";
@@ -60,10 +73,14 @@ public class UserControllerTest {
                 .andExpect(content().json("{}"));
 
         verify(userRepository).save(argThat((User u) -> u.getUsername().equals("jane")));
+        verify(userRepository, times(1)).save(any());
+        verify(passwordEncoder).encode(argThat((String password) -> password.equals("qwertyui2")));
+        verify(passwordEncoder, times(1)).encode(any());
     }
 
+    @WithMockUser
     @Test
-    public void create_new_user_with_alphabet_only_password_must_throw_exception() throws Exception{
+    public void create_new_user_with_alphabet_only_password_throws_exception() throws Exception{
 
         Object o = new Object(){
             public String username = "jane";
@@ -81,8 +98,9 @@ public class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
-    public void create_new_user_with_numbers_only_password_must_throw_exception() throws Exception{
+    public void create_new_user_with_numbers_only_password_throws_exception() throws Exception{
 
         Object o = new Object(){
             public String username = "jane";
@@ -100,8 +118,9 @@ public class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
-    public void create_new_user_with_too_short_password_must_throw_exception() throws Exception{
+    public void create_new_user_with_too_short_password_throws_exception() throws Exception{
 
         Object o = new Object(){
             public String username = "jane";
@@ -119,8 +138,9 @@ public class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @WithMockUser
     @Test
-    public void get_user_with_id() throws Exception {
+    public void gets_user_with_id() throws Exception {
 
         User u = new User();
         u.setUsername("jane");
@@ -135,8 +155,9 @@ public class UserControllerTest {
 
     }
 
+    @WithMockUser
     @Test
-    public void get_user_with_existing_username() throws Exception{
+    public void gets_user_with_existing_username() throws Exception{
 
         User u = new User();
         u.setUsername("jane");
@@ -152,8 +173,9 @@ public class UserControllerTest {
         verify(userRepository, times(1)).findByUsername(any());
     }
 
+    @WithMockUser
     @Test
-    public void get_user_with_non_existent_username() throws Exception{
+    public void gets_user_with_non_existent_username() throws Exception{
 
         when(userRepository.findByUsername(any())).thenReturn(null);
 
