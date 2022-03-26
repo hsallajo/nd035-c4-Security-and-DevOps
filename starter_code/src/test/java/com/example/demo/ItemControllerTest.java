@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.controllers.ItemController;
 import com.example.demo.model.persistence.Item;
+import com.example.demo.model.persistence.UserOrder;
 import com.example.demo.model.persistence.repositories.ItemRepository;
 import com.example.demo.security.UserDetailsServiceImpl;
 import org.junit.Test;
