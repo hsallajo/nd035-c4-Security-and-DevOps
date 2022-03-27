@@ -11,13 +11,16 @@ public class TestHelp {
     /*user*/
     public static final String USERNAME = "jane";
     public static final int USER_ID = 1;
+    public static final String VALID_PASSWORD = "qwertyui2";
+    public static final String INVALID_PASSWORD_1 = "qwertyui";
+    public static final String INVALID_PASSWORD_2 = "12345678";
+    public static final String INVALID_PASSWORD_3 = "abc123";
 
     /*item*/
     public static final long ITEM_1_ID = 1L;
     public static final String ITEM_1_NAME = "test item";
     public static final double ITEM_1_PRICE = 2.0;
     public static final String ITEM_1_DESCRIPTION = "Perfect item for any use.";
-
 
     /*cart*/
     public static final int NUMBER_OF_ITEMS = 3;

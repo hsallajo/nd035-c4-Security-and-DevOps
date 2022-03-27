@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.net.URI;
 
+import static com.example.demo.TestHelp.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
@@ -56,9 +57,9 @@ public class UserControllerTest {
     public void creates_new_user_with_valid_credentials() throws Exception{
 
         Object o = new Object(){
-            public String username = "jane";
-            public String password = "qwertyui2";
-            public String confirmPassword = "qwertyui2";
+            public String username = USERNAME;
+            public String password = VALID_PASSWORD;
+            public String confirmPassword = VALID_PASSWORD;
         };
 
         ObjectMapper mapper = new ObjectMapper();
@@ -72,9 +73,9 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{}"));
 
-        verify(userRepository).save(argThat((User u) -> u.getUsername().equals("jane")));
+        verify(userRepository).save(argThat((User u) -> u.getUsername().equals(USERNAME)));
         verify(userRepository, times(1)).save(any());
-        verify(passwordEncoder).encode(argThat((String password) -> password.equals("qwertyui2")));
+        verify(passwordEncoder).encode(argThat((String password) -> password.equals(VALID_PASSWORD)));
         verify(passwordEncoder, times(1)).encode(any());
     }
 
@@ -83,9 +84,9 @@ public class UserControllerTest {
     public void create_new_user_with_alphabet_only_password_throws_exception() throws Exception{
 
         Object o = new Object(){
-            public String username = "jane";
-            public String password = "qwertyui";
-            public String confirmPassword = "qwertyui";
+            public String username = USERNAME;
+            public String password = INVALID_PASSWORD_1;
+            public String confirmPassword = INVALID_PASSWORD_1;
         };
 
         ObjectMapper mapper = new ObjectMapper();
@@ -103,9 +104,9 @@ public class UserControllerTest {
     public void create_new_user_with_numbers_only_password_throws_exception() throws Exception{
 
         Object o = new Object(){
-            public String username = "jane";
-            public String password = "12345678";
-            public String confirmPassword = "12345678";
+            public String username = USERNAME;
+            public String password = INVALID_PASSWORD_2;
+            public String confirmPassword = INVALID_PASSWORD_2;
         };
 
         ObjectMapper mapper = new ObjectMapper();
@@ -123,9 +124,9 @@ public class UserControllerTest {
     public void create_new_user_with_too_short_password_throws_exception() throws Exception{
 
         Object o = new Object(){
-            public String username = "jane";
-            public String password = "abc123";
-            public String confirmPassword = "abc123";
+            public String username = USERNAME;
+            public String password = INVALID_PASSWORD_3;
+            public String confirmPassword = INVALID_PASSWORD_3;
         };
 
         ObjectMapper mapper = new ObjectMapper();
@@ -142,16 +143,14 @@ public class UserControllerTest {
     @Test
     public void gets_user_with_id() throws Exception {
 
-        User u = new User();
-        u.setUsername("jane");
-        u.setId(1);
+        User user = TestHelp.createUser();
 
-        when(userRepository.findById(any())).thenReturn(java.util.Optional.of(u));
+        when(userRepository.findById(any())).thenReturn(java.util.Optional.of(user));
 
-        mockMvc.perform(get("/api/user/id/{id}","1"))
+        mockMvc.perform(get("/api/user/id/{id}",USER_ID))
                 .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("jane"));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(USERNAME));
 
     }
 
@@ -159,13 +158,11 @@ public class UserControllerTest {
     @Test
     public void gets_user_with_existing_username() throws Exception{
 
-        User u = new User();
-        u.setUsername("jane");
-        u.setId(1);
+        User user = TestHelp.createUser();
 
-        when(userRepository.findByUsername(any())).thenReturn(u);
+        when(userRepository.findByUsername(any())).thenReturn(user);
 
-        mockMvc.perform(get("/api/user/{username}","jane"))
+        mockMvc.perform(get("/api/user/{username}",USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json("{}"));

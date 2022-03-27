@@ -18,8 +18,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,9 +51,7 @@ public class OrderControllerTest {
     @Test
     public void submit_order_with_valid_user() throws Exception {
 
-        User user = new User();
-        user.setUsername(TestHelp.USERNAME);
-        user.setId(1);
+        User user = TestHelp.createUser();
 
         Cart cart = new Cart();
         cart.setUser(user);
@@ -66,6 +68,23 @@ public class OrderControllerTest {
         verify(orderRepository, times(1)).save(any());
         verify(orderRepository).save(argThat((UserOrder o) -> o.getItems().size() == cart.getItems().size()));
 
+    }
+
+    @WithMockUser
+    @Test
+    public void get_history_with_valid_user() throws Exception {
+
+        User user = TestHelp.createUser();
+
+        List<UserOrder> orders = new ArrayList<>();
+
+        when(userRepository.findByUsername(TestHelp.USERNAME)).thenReturn(user);
+        when(orderRepository.findByUser(user)).thenReturn(orders);
+
+        mockMvc.perform(get("/api/order/history/{username}",TestHelp.USERNAME))
+                .andExpect(status().isOk());
+
+        verify(orderRepository, times(1)).findByUser(user);
     }
 
 }
