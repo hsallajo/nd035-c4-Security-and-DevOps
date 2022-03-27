@@ -2,6 +2,9 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
+import com.example.demo.exceptions.UserNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +23,9 @@ import com.example.demo.model.persistence.repositories.UserRepository;
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
-	
+
+	private static final Logger log = LoggerFactory.getLogger(OrderController.class);
+	private static final String API_ORDER = "API_ORDER: ";
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -31,21 +36,29 @@ public class OrderController {
 	
 	@PostMapping("/submit/{username}")
 	public ResponseEntity<UserOrder> submit(@PathVariable String username) {
+
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			return ResponseEntity.notFound().build();
+			log.info(API_ORDER + "Submitting order failed.");
+			throw new UserNotFoundException("User not found.");
 		}
 		UserOrder order = UserOrder.createFromCart(user.getCart());
+
 		orderRepository.save(order);
+		log.info(API_ORDER + "Order submitted successfully. Username: " + user.getUsername() + "'. Order id: " + order.getId());
+
 		return ResponseEntity.ok(order);
 	}
 	
 	@GetMapping("/history/{username}")
 	public ResponseEntity<List<UserOrder>> getOrdersForUser(@PathVariable String username) {
+
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			return ResponseEntity.notFound().build();
+			log.info(API_ORDER + "Getting orders failed.");
+			throw new UserNotFoundException("User not found.");
 		}
+
 		return ResponseEntity.ok(orderRepository.findByUser(user));
 	}
 }

@@ -1,10 +1,10 @@
 package com.example.demo.controllers;
 
+import com.example.demo.exceptions.InvalidPasswordException;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +25,9 @@ import com.example.demo.model.requests.CreateUserRequest;
 public class UserController {
 
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+	private static final String API_USER = "API_USER: ";
+	public static final String INVALID_PASSWORD_TOO_SHORT = "Password length must be at least 8 characters, and it needs to contain both letters and numbers.";
+	public static final String INVALID_PASSWORD_NO_MATCH = "Password and confirmPassword need to match.";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -37,11 +40,13 @@ public class UserController {
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
+
 		return ResponseEntity.of(userRepository.findById(id));
 	}
 
 	@GetMapping("/{username}")
 	public ResponseEntity<User> findByUserName(@PathVariable String username) {
+
 		User user = userRepository.findByUsername(username);
 		return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
 	}
@@ -55,15 +60,15 @@ public class UserController {
 		if (createUserRequest.getPassword() == null ||
 				createUserRequest.getConfirmPassword() == null ||
 				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.info("Invalid username or password.");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			log.info(API_USER + "Creating user failed. Username:'" + user.getUsername());
+			throw new InvalidPasswordException(INVALID_PASSWORD_NO_MATCH);
 		}
 
 		if (createUserRequest.getPassword().length() < 8
 				|| StringUtils.isAlpha(createUserRequest.getPassword())
 				|| StringUtils.isNumeric(createUserRequest.getPassword())){
-			log.info("Password length must be at least 8 characters, and it needs to contain both letters and numbers.");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			log.info(API_USER + "Creating user failed. Username:'" + user.getUsername() + "'");
+			throw new InvalidPasswordException(INVALID_PASSWORD_TOO_SHORT);
 		}
 
 		user.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
@@ -73,7 +78,7 @@ public class UserController {
 		user.setCart(cart);
 
 		userRepository.save(user);
-		log.info("Created username " + user.getUsername() + ".");
+		log.info(API_USER + "User created successfully. Username:'" + user.getUsername() + "'");
 
 		return ResponseEntity.ok(user);
 	}
