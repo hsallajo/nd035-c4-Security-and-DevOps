@@ -38,20 +38,21 @@ public class OrderController {
 
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.info(API_TAG + '=' + ORDER_API + ","
-					+ ERR_TAG + "=" + "'user has null value'" + ","
-					+ MSG_TAG + "=" + "'" + username + "'' not found. Submit failed.'");
+			log.info(API + '=' + ORDER_API + "/findByUsername" + ","
+					+ ERR_TAG + "=" + "'illegal request param (user == null)'" + ","
+					+ MSG_TAG + "=" + "'user not found'" + ","
+					+ USERNAME + "=" + username);
 
 			throw new UserNotFoundException("User not found.");
 		}
 		UserOrder order = UserOrder.createFromCart(user.getCart());
 
 		orderRepository.save(order);
-		log.info(API_TAG + '=' + ORDER_API + ","
-				+ MSG_TAG + "=" + "'submitted successfully'" + ","
+		log.info(API + '=' + ORDER_API + "/submit" + ","
+				+ MSG_TAG + "=" + "'order submitted'" + ","
 				+ USER_ID + "=" + user.getId() + ","
-				+ USERNAME + "=" + user.getUsername() + ","
-				+ ORDER_ID + "=" + order.getId());
+				+ ORDER_ID + "=" + order.getId() + ","
+				+ TOTAL + "=" + order.getTotal());
 
 		return ResponseEntity.ok(order);
 	}
@@ -61,8 +62,10 @@ public class OrderController {
 
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.info(API_TAG + '=' + ORDER_API + ","
-					+ ERR_TAG + "=" + "user '" + username + "'' not found. Get_user_orders failed.'");
+			log.info(API + '=' + ORDER_API + "/getUserOrders" + ","
+					+ ERR_TAG + "=" + "'illegal request param (user == null)'" + ","
+					+ MSG_TAG + "=" + "'user not found'" + ","
+					+ USERNAME + "=" + username);
 
 			throw new UserNotFoundException("User not found.");
 		}

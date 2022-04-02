@@ -59,9 +59,9 @@ public class UserController {
 		if (createUserRequest.getPassword() == null
 				|| createUserRequest.getConfirmPassword() == null
 				|| !createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.info(API_TAG + '=' + USER_API + ","
+			log.info(API + '=' + USER_API + "/createUser" + ","
 					+ ERR_TAG + "=" + "'invalid password'" + ","
-					+ MSG_TAG + "=" + "'creating user failed'" + ","
+					+ MSG_TAG + "=" + "'create user failed'" + ","
 					+ USERNAME + "=" + user.getUsername());
 
 			throw new InvalidPasswordException(INVALID_PASSWORD_NO_MATCH);
@@ -70,9 +70,9 @@ public class UserController {
 		if (createUserRequest.getPassword().length() < 8
 				|| StringUtils.isAlpha(createUserRequest.getPassword())
 				|| StringUtils.isNumeric(createUserRequest.getPassword())){
-			log.info(API_TAG + '=' + USER_API + ","
+			log.info(API + '=' + USER_API + "/createUser" + ","
 					+ ERR_TAG + "=" + "'invalid password'" + ","
-					+ MSG_TAG + "=" + "'creating user failed'" + ","
+					+ MSG_TAG + "=" + "'create user failed'" + ","
 					+ USERNAME + "=" + user.getUsername());
 
 			throw new InvalidPasswordException(INVALID_PASSWORD_TOO_SHORT);
@@ -86,8 +86,8 @@ public class UserController {
 
 		userRepository.save(user);
 
-		log.info(API_TAG + '=' + USER_API + ","
-				+ MSG_TAG + "=" + "'user created successfully'" + ","
+		log.info(API + '=' + USER_API + "/createUser" + ","
+				+ MSG_TAG + "=" + "'user created'" + ","
 				+ USERNAME + "=" + user.getUsername() + ","
 				+ USER_ID + "=" + user.getId());
 

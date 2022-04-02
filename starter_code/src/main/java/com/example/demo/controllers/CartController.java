@@ -44,18 +44,19 @@ public class CartController {
 
 		User user = userRepository.findByUsername(request.getUsername());
 		if(user == null) {
-			log.info(API_TAG + '=' + CART_API + ","
-					+ ERR_TAG + "=" + "'user has null value'" + ","
-					+ MSG_TAG + "=" + "'add to cart failed'");
+			log.info(API + '=' + CART_API + "/addToCart" + ","
+					+ ERR_TAG + "=" + "'illegal request param (user == null)'" + ","
+					+ MSG_TAG + "=" + "'user not found'" + ","
+					+ USERNAME + "=" + request.getUsername());
 
 			throw new UserNotFoundException("User not found.");
 		}
 
 		Optional<Item> item = itemRepository.findById(request.getItemId());
 		if(!item.isPresent()) {
-			log.info(API_TAG + '=' + CART_API + ","
-					+ ERR_TAG + "=" + "'item not found'" + ","
-					+ MSG_TAG + "=" + "'add to cart failed'" + ","
+			log.info(API + '=' + CART_API + "/addToCart" + ","
+					+ ERR_TAG + "=" + "'illegal request param (item == null)'" + ","
+					+ MSG_TAG + "=" + "'item not found'" + ","
 					+ USER_ID + "=" + user.getId() + ","
 					+ ITEM_ID + "=" + request.getItemId());
 
@@ -68,7 +69,7 @@ public class CartController {
 
 		cartRepository.save(cart);
 
-		log.info(API_TAG + '=' + CART_API + ","
+		log.info(API + '=' + CART_API + "/addToCart" + ","
 				+ MSG_TAG + "=" + "'item(s) added successfully'" + ","
 				+ USER_ID + "=" + user.getId() + ","
 				+ ITEM_ID + "=" + item.get().getId());
@@ -81,15 +82,17 @@ public class CartController {
 
 		User user = userRepository.findByUsername(request.getUsername());
 		if(user == null) {
-			log.info(API_TAG + '=' + CART_API + ","
-					+ MSG_TAG + "=" + "'user not found'");
+			log.info(API + '=' + CART_API + "/removeFromCart" + ","
+					+ MSG_TAG + "=" + "'user not found'" + ","
+					+ USERNAME + "=" + request.getUsername());
 
 			throw new UserNotFoundException("User not found.");
 		}
 
 		Optional<Item> item = itemRepository.findById(request.getItemId());
 		if(!item.isPresent()) {
-			log.info(API_TAG + '=' + CART_API + ","
+			log.info(API + '=' + CART_API + "/removeFromCart" + ","
+					+ ERR_TAG + "=" + "'illegal request param (item == null)'" + ","
 					+ MSG_TAG + "=" + "'item not found'" + ","
 					+ USER_ID + "=" + user.getId() + ","
 					+ ITEM_ID + "=" + request.getItemId());
@@ -103,7 +106,7 @@ public class CartController {
 
 		cartRepository.save(cart);
 
-		log.info(API_TAG + '=' + CART_API + ","
+		log.info(API + '=' + CART_API + "/removeFromCart" + ","
 				+ MSG_TAG + "=" + "'item(s) removed successfully'" + ","
 				+ USER_ID + "=" + user.getId() + ","
 				+ ITEM_ID + "=" + request.getItemId());

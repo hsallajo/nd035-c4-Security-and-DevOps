@@ -4,7 +4,7 @@ public class DemoAppConstants {
 
     /* user */
 
-    public static final String API_TAG = "api";
+    public static final String API = "api";
     public static final String MSG_TAG = "msg";
     public static final String ERR_TAG = "error";
 
@@ -21,6 +21,7 @@ public class DemoAppConstants {
 
     public static final String ORDER_ID = "order_id";
     public static final String ORDER_API = "orders";
+    public static final String TOTAL = "total";
 
     public static final String INVALID_PASSWORD_TOO_SHORT = "Password length must be at least 8 characters, and it needs to contain both letters and numbers.";
     public static final String INVALID_PASSWORD_NO_MATCH  = "Password and confirmPassword need to match.";
