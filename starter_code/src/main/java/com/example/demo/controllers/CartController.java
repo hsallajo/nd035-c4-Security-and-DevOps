@@ -70,7 +70,7 @@ public class CartController {
 		cartRepository.save(cart);
 
 		log.info(API + '=' + CART_API + "/addToCart" + ","
-				+ MSG_TAG + "=" + "'item(s) added successfully'" + ","
+				+ MSG_TAG + "=" + "'item(s) added'" + ","
 				+ USER_ID + "=" + user.getId() + ","
 				+ ITEM_ID + "=" + item.get().getId());
 
@@ -107,7 +107,7 @@ public class CartController {
 		cartRepository.save(cart);
 
 		log.info(API + '=' + CART_API + "/removeFromCart" + ","
-				+ MSG_TAG + "=" + "'item(s) removed successfully'" + ","
+				+ MSG_TAG + "=" + "'item(s) removed'" + ","
 				+ USER_ID + "=" + user.getId() + ","
 				+ ITEM_ID + "=" + request.getItemId());
 
