@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.persistence.Cart;
 import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.UserOrder;
-import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.OrderRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 
@@ -40,15 +38,16 @@ public class OrderController {
 
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.info(API_TAG + '=' + API_ORDER + ","
-					+ MSG_TAG + "=" + "'user ''" + username + "'' not found'");
+			log.info(API_TAG + '=' + ORDER_API + ","
+					+ ERR_TAG + "=" + "'user has null value'" + ","
+					+ MSG_TAG + "=" + "'" + username + "'' not found. Submit failed.'");
 
 			throw new UserNotFoundException("User not found.");
 		}
 		UserOrder order = UserOrder.createFromCart(user.getCart());
 
 		orderRepository.save(order);
-		log.info(API_TAG + '=' + API_ORDER + ","
+		log.info(API_TAG + '=' + ORDER_API + ","
 				+ MSG_TAG + "=" + "'submitted successfully'" + ","
 				+ USER_ID + "=" + user.getId() + ","
 				+ USERNAME + "=" + user.getUsername() + ","
@@ -58,13 +57,12 @@ public class OrderController {
 	}
 	
 	@GetMapping("/history/{username}")
-	public ResponseEntity<List<UserOrder>> getOrdersForUser(@PathVariable String username) {
+	public ResponseEntity<List<UserOrder>> getUserOrders(@PathVariable String username) {
 
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.info(API_ORDER + "'get request failed'");
-			log.info(API_TAG + '=' + API_ORDER + ","
-					+ MSG_TAG + "=" + "'user ''" + username + "'' not found'");
+			log.info(API_TAG + '=' + ORDER_API + ","
+					+ ERR_TAG + "=" + "user '" + username + "'' not found. Get_user_orders failed.'");
 
 			throw new UserNotFoundException("User not found.");
 		}
