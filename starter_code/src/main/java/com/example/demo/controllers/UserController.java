@@ -20,14 +20,13 @@ import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
 
+import static com.example.demo.controllers.DemoAppConstants.*;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
-	private static final String API_USER = "API_USER: ";
-	public static final String INVALID_PASSWORD_TOO_SHORT = "Password length must be at least 8 characters, and it needs to contain both letters and numbers.";
-	public static final String INVALID_PASSWORD_NO_MATCH = "Password and confirmPassword need to match.";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -57,17 +56,23 @@ public class UserController {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
 
-		if (createUserRequest.getPassword() == null ||
-				createUserRequest.getConfirmPassword() == null ||
-				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.info(API_USER + "Creating user failed. Username:'" + user.getUsername());
+		if (createUserRequest.getPassword() == null
+				|| createUserRequest.getConfirmPassword() == null
+				|| !createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
+			log.info(API_TAG + '=' + API_USER + ","
+					+ MSG_TAG + "=" + "'creating username failed'" + ","
+					+ USERNAME + "=" + user.getUsername());
+
 			throw new InvalidPasswordException(INVALID_PASSWORD_NO_MATCH);
 		}
 
 		if (createUserRequest.getPassword().length() < 8
 				|| StringUtils.isAlpha(createUserRequest.getPassword())
 				|| StringUtils.isNumeric(createUserRequest.getPassword())){
-			log.info(API_USER + "Creating user failed. Username:'" + user.getUsername() + "'");
+			log.info(API_TAG + '=' + API_USER + ","
+					+ MSG_TAG + "=" + "'creating username failed'" + ","
+					+ USERNAME + "=" + user.getUsername());
+
 			throw new InvalidPasswordException(INVALID_PASSWORD_TOO_SHORT);
 		}
 
@@ -78,7 +83,11 @@ public class UserController {
 		user.setCart(cart);
 
 		userRepository.save(user);
-		log.info(API_USER + "User created successfully. Username:'" + user.getUsername() + "'");
+
+		log.info(API_TAG + '=' + API_USER + ","
+				+ MSG_TAG + "=" + "'user created successfully'" + ","
+				+ USERNAME + "=" + user.getUsername() + ","
+				+ USER_ID + "=" + user.getId());
 
 		return ResponseEntity.ok(user);
 	}

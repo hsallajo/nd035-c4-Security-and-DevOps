@@ -20,13 +20,14 @@ import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.OrderRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 
+import static com.example.demo.controllers.DemoAppConstants.*;
+
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
 
 	private static final Logger log = LoggerFactory.getLogger(OrderController.class);
-	private static final String API_ORDER = "API_ORDER: ";
-	
+
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -39,13 +40,19 @@ public class OrderController {
 
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.info(API_ORDER + "Submitting order failed.");
+			log.info(API_TAG + '=' + API_ORDER + ","
+					+ MSG_TAG + "=" + "'user ''" + username + "'' not found'");
+
 			throw new UserNotFoundException("User not found.");
 		}
 		UserOrder order = UserOrder.createFromCart(user.getCart());
 
 		orderRepository.save(order);
-		log.info(API_ORDER + "Order submitted successfully. Username: " + user.getUsername() + "'. Order id: " + order.getId());
+		log.info(API_TAG + '=' + API_ORDER + ","
+				+ MSG_TAG + "=" + "'submitted successfully'" + ","
+				+ USER_ID + "=" + user.getId() + ","
+				+ USERNAME + "=" + user.getUsername() + ","
+				+ ORDER_ID + "=" + order.getId());
 
 		return ResponseEntity.ok(order);
 	}
@@ -55,7 +62,10 @@ public class OrderController {
 
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.info(API_ORDER + "Getting orders failed.");
+			log.info(API_ORDER + "'get request failed'");
+			log.info(API_TAG + '=' + API_ORDER + ","
+					+ MSG_TAG + "=" + "'user ''" + username + "'' not found'");
+
 			throw new UserNotFoundException("User not found.");
 		}
 
