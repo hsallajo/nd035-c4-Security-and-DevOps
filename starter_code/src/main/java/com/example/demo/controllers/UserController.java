@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.exceptions.InvalidPasswordException;
+import com.example.demo.exceptions.UsernameExistsException;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,7 @@ public class UserController {
 		if (createUserRequest.getPassword() == null
 				|| createUserRequest.getConfirmPassword() == null
 				|| !createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.info(API + '=' + USER_API + "/createUser" + ","
+			log.info(API + '=' + USER_API + "/create" + ","
 					+ ERR_TAG + "=" + "'invalid password'" + ","
 					+ MSG_TAG + "=" + "'create user failed'" + ","
 					+ USERNAME + "=" + user.getUsername());
@@ -70,12 +71,21 @@ public class UserController {
 		if (createUserRequest.getPassword().length() < 8
 				|| StringUtils.isAlpha(createUserRequest.getPassword())
 				|| StringUtils.isNumeric(createUserRequest.getPassword())){
-			log.info(API + '=' + USER_API + "/createUser" + ","
+			log.info(API + '=' + USER_API + "/create" + ","
 					+ ERR_TAG + "=" + "'invalid password'" + ","
 					+ MSG_TAG + "=" + "'create user failed'" + ","
 					+ USERNAME + "=" + user.getUsername());
 
 			throw new InvalidPasswordException(INVALID_PASSWORD_TOO_SHORT);
+		}
+
+		if(userRepository.findByUsername(createUserRequest.getUsername()) != null){
+			log.info(API + '=' + USER_API + "/create" + ","
+					+ ERR_TAG + "=" + "'username already exists'" + ","
+					+ MSG_TAG + "=" + "'create user failed'" + ","
+					+ USERNAME + "=" + user.getUsername());
+
+			throw new UsernameExistsException(USER_EXISTS);
 		}
 
 		user.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
@@ -86,7 +96,7 @@ public class UserController {
 
 		userRepository.save(user);
 
-		log.info(API + '=' + USER_API + "/createUser" + ","
+		log.info(API + '=' + USER_API + "/create" + ","
 				+ MSG_TAG + "=" + "'user created'" + ","
 				+ USERNAME + "=" + user.getUsername() + ","
 				+ USER_ID + "=" + user.getId());

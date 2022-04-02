@@ -9,7 +9,7 @@ public class DemoAppConstants {
     public static final String ERR_TAG = "error";
 
     public static final String USERNAME = "username";
-    public static final String USER_API = "users";
+    public static final String USER_API = "user";
     public static final String USER_ID = "id";
 
     /* cart */
@@ -25,4 +25,5 @@ public class DemoAppConstants {
 
     public static final String INVALID_PASSWORD_TOO_SHORT = "Password length must be at least 8 characters, and it needs to contain both letters and numbers.";
     public static final String INVALID_PASSWORD_NO_MATCH  = "Password and confirmPassword need to match.";
+    public static final String USER_EXISTS  = "User already exists.";
 }

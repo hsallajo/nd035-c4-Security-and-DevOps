@@ -38,7 +38,7 @@ public class OrderController {
 
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.info(API + '=' + ORDER_API + "/findByUsername" + ","
+			log.info(API + '=' + ORDER_API + "/submit/{username}" + ","
 					+ ERR_TAG + "=" + "'illegal request param (user == null)'" + ","
 					+ MSG_TAG + "=" + "'user not found'" + ","
 					+ USERNAME + "=" + username);
@@ -48,7 +48,7 @@ public class OrderController {
 		UserOrder order = UserOrder.createFromCart(user.getCart());
 
 		orderRepository.save(order);
-		log.info(API + '=' + ORDER_API + "/submit" + ","
+		log.info(API + '=' + ORDER_API + "/submit/{username}" + ","
 				+ MSG_TAG + "=" + "'order submitted'" + ","
 				+ USER_ID + "=" + user.getId() + ","
 				+ ORDER_ID + "=" + order.getId() + ","
@@ -62,7 +62,7 @@ public class OrderController {
 
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.info(API + '=' + ORDER_API + "/getUserOrders" + ","
+			log.info(API + '=' + ORDER_API + "/history/{username}" + ","
 					+ ERR_TAG + "=" + "'illegal request param (user == null)'" + ","
 					+ MSG_TAG + "=" + "'user not found'" + ","
 					+ USERNAME + "=" + username);
