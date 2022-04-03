@@ -11,9 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @EntityScan("com.example.demo.model.persistence")
 @SpringBootApplication(exclude={SecurityAutoConfiguration.class})
-public class SareetaApplication {
+public class DemoApplication {
 
-	private static final Logger log = LoggerFactory.getLogger(SareetaApplication.class);
+	private static final Logger log = LoggerFactory.getLogger(DemoApplication.class);
 	private static final String DEMO_APP_MAIN = "API_MAIN: ";
 
 	@Bean
@@ -24,7 +24,7 @@ public class SareetaApplication {
 	public static void main(String[] args) {
 
 		log.info(DEMO_APP_MAIN + "Starting demo application");
-		SpringApplication.run(SareetaApplication.class, args);
+		SpringApplication.run(DemoApplication.class, args);
 	}
 
 }
